@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shasta Bay Area — Event Reports 2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --red:#C8102E; --red-dark:#7A1F1F; --gold:#F5C518;
+    --red-tint:#FBE0E4; --gold-tint:#FFF7E0;
+    --ink:#241414; --ink-soft:#6B5C5C; --line:#EFE0E2;
+    --card-bg:#FFFFFF; --page-bg:#FAF6F2;
+    --radius-lg:16px; --radius-md:10px;
+    --shadow:0 1px 2px rgba(60,10,10,0.04), 0 8px 24px -16px rgba(60,10,10,0.20);
+  }
+  *{ box-sizing:border-box; margin:0; padding:0; }
+  body{ font-family:'Inter',sans-serif; background:var(--page-bg); color:var(--ink); -webkit-font-smoothing:antialiased; padding:32px 24px 80px; }
+  .wrap{ max-width:1200px; margin:0 auto; }
+
+  /* TOPBAR */
+  .topbar{ display:flex; align-items:flex-start; justify-content:space-between; flex-wrap:wrap; gap:24px; margin-bottom:28px; }
+  .brand-block .eyebrow{ font-size:12px; letter-spacing:.12em; text-transform:uppercase; color:var(--red); font-weight:600; margin-bottom:6px; }
+  .brand-block h1{ font-family:'Poppins',sans-serif; font-size:28px; font-weight:700; color:var(--red-dark); letter-spacing:-.01em; }
+  .brand-block p{ font-size:14px; color:var(--ink-soft); margin-top:6px; max-width:480px; }
+  .controls{ display:flex; align-items:center; gap:10px; }
+  .btn{ display:inline-flex; align-items:center; gap:8px; font-family:'Inter',sans-serif; font-weight:600; font-size:13px; padding:10px 16px; border-radius:999px; border:1px solid var(--line); background:#fff; color:var(--red-dark); cursor:pointer; transition:border-color .15s,background .15s,transform .1s; }
+  .btn:hover{ border-color:var(--red); background:var(--red-tint); }
+  .btn:active{ transform:scale(0.98); }
+  .btn.primary{ background:var(--red); color:#fff; border-color:var(--red); }
+  .btn.primary:hover{ background:var(--red-dark); border-color:var(--red-dark); }
+  .btn svg{ width:15px; height:15px; flex-shrink:0; }
+  .btn .spin{ animation:spin .8s linear infinite; }
+  @keyframes spin{ to{ transform:rotate(360deg); } }
+  .last-sync{ font-size:12px; color:var(--ink-soft); margin-top:8px; text-align:right; }
+
+  /* SUMMARY STRIP */
+  .summary{ display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:14px; margin-bottom:28px; }
+  .stat{ background:var(--card-bg); border:1px solid var(--line); border-radius:var(--radius-lg); padding:16px 18px; }
+  .stat .label{ font-size:12px; color:var(--ink-soft); font-weight:500; margin-bottom:8px; }
+  .stat .value{ font-family:'Poppins',sans-serif; font-size:24px; font-weight:600; color:var(--red-dark); }
+  .stat .value.accent{ color:var(--red); }
+
+  /* FLAVOR CHART PANEL */
+  .chart-panel{ background:var(--card-bg); border:1px solid var(--line); border-radius:var(--radius-lg); padding:22px 24px; margin-bottom:28px; box-shadow:var(--shadow); }
+  .chart-panel h2{ font-family:'Poppins',sans-serif; font-size:16px; font-weight:600; color:var(--red-dark); margin-bottom:4px; }
+  .chart-panel p{ font-size:12.5px; color:var(--ink-soft); margin-bottom:18px; }
+  .bar-row{ display:flex; align-items:center; gap:12px; margin-bottom:10px; }
+  .bar-row:last-child{ margin-bottom:0; }
+  .bar-label{ font-size:13px; font-weight:600; color:var(--ink); min-width:160px; text-align:right; }
+  .bar-track{ flex:1; background:var(--red-tint); border-radius:999px; height:26px; overflow:hidden; position:relative; }
+  .bar-fill{ height:100%; border-radius:999px; background:var(--red); transition:width .6s cubic-bezier(.4,0,.2,1); display:flex; align-items:center; justify-content:flex-end; padding-right:10px; min-width:32px; }
+  .bar-pts{ font-size:11px; font-weight:700; color:#fff; white-space:nowrap; }
+  .bar-fill.rank1{ background:var(--red); }
+  .bar-fill.rank2{ background:#E84060; }
+  .bar-fill.rank3{ background:#F47A8B; }
+  .bar-fill.rank4{ background:var(--gold); }
+  .bar-fill.rank5{ background:#E0AC00; }
+  .bar-fill.rankn{ background:#C8A0A0; }
+
+  /* MONTH / WEEK GROUPS */
+  .month-group{ margin-bottom:8px; }
+  .month-header{ display:flex; align-items:center; gap:12px; padding:14px 4px; cursor:pointer; user-select:none; }
+  .month-header h2{ font-family:'Poppins',sans-serif; font-size:18px; font-weight:600; color:var(--red-dark); }
+  .month-header .count{ font-size:12px; font-weight:600; color:var(--red); background:var(--red-tint); padding:3px 10px; border-radius:999px; }
+  .month-header .chevron{ margin-left:auto; width:18px; height:18px; color:var(--ink-soft); transition:transform .2s; flex-shrink:0; }
+  .month-header.collapsed .chevron{ transform:rotate(-90deg); }
+  .month-divider{ height:1px; background:var(--line); margin:0 4px 18px; }
+  .month-body{ overflow:hidden; transition:max-height .25s ease; }
+  .month-body.collapsed{ max-height:0 !important; }
+  .week-group{ margin-bottom:28px; }
+  .week-label{ font-size:12px; font-weight:600; letter-spacing:.06em; text-transform:uppercase; color:var(--ink-soft); margin:0 4px 12px; display:flex; align-items:center; gap:8px; }
+  .week-label::after{ content:''; flex:1; height:1px; background:var(--line); }
+
+  /* CARDS */
+  .card-grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(320px,1fr)); gap:16px; }
+  .card{ background:var(--card-bg); border:1px solid var(--line); border-radius:var(--radius-lg); box-shadow:var(--shadow); padding:18px 20px; display:flex; flex-direction:column; gap:12px; transition:transform .15s,box-shadow .15s; }
+  .card:hover{ transform:translateY(-2px); box-shadow:0 4px 8px rgba(60,10,10,0.07),0 16px 32px -18px rgba(60,10,10,0.30); }
+  .card-head{ display:flex; justify-content:space-between; gap:12px; }
+  .card-head h3{ font-family:'Poppins',sans-serif; font-size:15px; font-weight:600; color:var(--ink); line-height:1.35; }
+  .date-badge{ flex-shrink:0; background:var(--red-tint); color:var(--red-dark); font-size:11px; font-weight:700; border-radius:8px; padding:6px 9px; text-align:center; line-height:1.25; min-width:48px; }
+  .date-badge .num{ font-size:16px; display:block; font-family:'Poppins',sans-serif; }
+  .meta-row{ display:flex; flex-wrap:wrap; gap:6px 14px; font-size:12.5px; color:var(--ink-soft); }
+  .meta-row span{ display:flex; align-items:center; gap:5px; }
+  .meta-row svg{ width:14px; height:14px; flex-shrink:0; }
+  .weather-pill{ display:inline-flex; align-items:center; gap:5px; font-size:12px; font-weight:600; color:var(--red-dark); background:var(--gold-tint); padding:5px 10px; border-radius:999px; }
+  .weather-pill svg{ width:14px; height:14px; }
+  .cost-pill{ display:inline-flex; align-items:center; gap:5px; font-size:12px; font-weight:700; color:#fff; background:var(--red); padding:5px 10px; border-radius:999px; }
+  .card-divider{ height:1px; background:var(--line); }
+  .section-label{ font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.05em; color:var(--red); margin-bottom:8px; }
+  .stat-mini-grid{ display:grid; grid-template-columns:1fr 1fr; gap:8px 16px; }
+  .stat-mini .num{ font-family:'Poppins',sans-serif; font-size:16px; font-weight:600; color:var(--ink); }
+  .stat-mini .lbl{ font-size:11px; color:var(--ink-soft); margin-top:1px; }
+
+  /* FLAVOR RANKING ON CARD */
+  .flavor-ranking{ display:flex; flex-direction:column; gap:6px; }
+  .flavor-rank-item{ display:flex; align-items:center; gap:10px; }
+  .rank-num{ font-family:'Poppins',sans-serif; font-size:13px; font-weight:700; color:#fff; background:var(--red); border-radius:50%; width:22px; height:22px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+  .rank-num.r2{ background:#E84060; }
+  .rank-num.r3{ background:#F47A8B; }
+  .rank-num.r4{ background:var(--gold); color:var(--red-dark); }
+  .rank-num.r5{ background:#E0AC00; color:var(--red-dark); }
+  .rank-name{ font-size:13px; font-weight:500; color:var(--ink); }
+
+  .detail{ font-size:12.5px; color:var(--ink-soft); line-height:1.55; }
+  .detail strong{ display:block; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.05em; color:var(--red); margin-bottom:3px; }
+
+  /* STATUS */
+  .status-pill{ display:inline-flex; align-items:center; gap:6px; font-size:11px; font-weight:600; padding:4px 10px; border-radius:999px; margin-bottom:6px; }
+  .status-pill.live{ background:var(--red-tint); color:var(--red-dark); }
+  .status-pill.sample{ background:var(--gold-tint); color:#8A6200; }
+  .status-pill.error{ background:#FBEAEA; color:#A33D3D; }
+  .status-pill .dot{ width:6px; height:6px; border-radius:50%; background:currentColor; }
+  .empty-state{ text-align:center; padding:60px 20px; color:var(--ink-soft); }
+  .empty-state svg{ width:40px; height:40px; color:var(--red); margin-bottom:14px; }
+  .empty-state h3{ font-family:'Poppins',sans-serif; font-size:16px; font-weight:600; color:var(--red-dark); margin-bottom:6px; }
+  .empty-state p{ font-size:13px; max-width:320px; margin:0 auto; }
+
+  @media(max-width:900px){ .summary{ grid-template-columns:repeat(2,1fr); } }
+  @media(max-width:560px){ body{ padding:20px 14px 60px; } .summary{ grid-template-columns:1fr 1fr; } .topbar{ flex-direction:column; } .last-sync{ text-align:left; } .bar-label{ min-width:100px; font-size:11px; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="topbar">
+    <div class="brand-block">
+      <div class="eyebrow">Shasta &middot; Bay Area Field Program 2026</div>
+      <h1>Event reports dashboard</h1>
+      <p>Live view of activations across the Bay Area &mdash; grouped by month and week, pulled directly from the team&rsquo;s shared tracker.</p>
+    </div>
+    <div style="text-align:right;">
+      <div id="statusPill" style="display:flex;justify-content:flex-end;"></div>
+      <div class="controls">
+        <button class="btn" id="refreshBtn" onclick="refreshData()">
+          <svg id="refreshIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 4v6h-6"/><path d="M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+          Refresh data
+        </button>
+        <button class="btn primary" onclick="openSheet()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          Open source sheet
+        </button>
+      </div>
+      <div class="last-sync" id="lastSync">Loading data&hellip;</div>
+    </div>
+  </div>
+
+  <!-- Summary strip -->
+  <div class="summary" id="summaryStrip"></div>
+
+  <!-- Cumulative flavor popularity chart -->
+  <div class="chart-panel" id="chartPanel" style="display:none;">
+    <h2>Flavor Popularity — Cumulative Campaign Rankings</h2>
+    <p>Points assigned per event: 1st place = highest weight. Builds up across all events throughout the summer.</p>
+    <div id="flavorChart"></div>
+  </div>
+
+  <!-- Event cards grouped by month/week -->
+  <div id="groupsContainer"></div>
+
+</div>
+
+<script>
+// ---------------------------------------------------------------
+// CONFIG — fill these in after deploying the Apps Script web app
+// ---------------------------------------------------------------
+const API_URL = "https://script.google.com/macros/s/AKfycbz437rPRSym8TxryT1Sqa5jsi6UPbHLhZjmDAWZ8OzPMI2AKWTbnNH7NQGw5HKWYVyQgQ/exec";
+const SHEET_URL = "https://docs.google.com/spreadsheets/d/1cD06rn_C9oHj2x6efG6fpC-Hmi3d4YF-B8Gl970rxWA/edit";
+
+let events = [];
+
+// Sample / preview data matching the new 15-column structure
+const sampleEvents = [
+  {
+    date:"2026-06-18", event:"Downtown Hayward Party",
+    venue:"Main And B St, Hayward Chamber Of Commerce, Hayward, CA 94541",
+    weather:"Sunny, little breezy", attendance:1000, interactions:400,
+    staffHours:9, placementCost:317, coupons:"45", totalSamples:635,
+    flavorRanking:"1. Tiki Fruit Punch\n2. Green Apple\n3. Cherry Cola",
+    teamFeedback:"Overall, the activation went very well and the team had strong engagement throughout the event. One challenge was placement directly next to the DJ booth — the music volume made it difficult for staff to hold meaningful conversations.",
+    consumerReactions:"Many consumers shared that Shasta has been a part of their lives in Hayward for years, creating several memorable moments centered around nostalgia and local pride.",
+    vendorInsights:"Approximately 45 vendors participated. Shasta's presence stood out as one of the few brands offering free product samples."
+  },
+  {
+    date:"2026-06-20", event:"Hayward Juneteenth",
+    venue:"Mt Eden High School",
+    weather:"Sunny, windy", attendance:2500, interactions:1000,
+    staffHours:10, placementCost:0, coupons:"40", totalSamples:1100,
+    flavorRanking:"1. Apple\n2. Tiki Fruit Punch\n3. Cherry Cola\n4. Root Beer",
+    teamFeedback:"Today's event was well attended and maintained a steady flow of attendees throughout the activation. Execution went smoothly with no operational issues.",
+    consumerReactions:"All four featured flavors were well received. Attendees particularly appreciated having a sugar-free option available.",
+    vendorInsights:"Approximately 30 other vendors on-site. No direct beverage sampling competitors observed."
+  }
+];
+
+// ---------------------------------------------------------------
+// FLAVOR CHART LOGIC
+// Parses ranking text like "1. Tiki Fruit Punch\n2. Green Apple"
+// and assigns points: 1st = N pts (N = total flavors ranked), etc.
+// ---------------------------------------------------------------
+function parseRanking(text) {
+  if (!text) return [];
+  const lines = text.toString().split(/\n|,/).map(l => l.trim()).filter(Boolean);
+  const ranked = [];
+  lines.forEach(line => {
+    const m = line.match(/^\d+[\.\)]\s*(.+)$/);
+    if (m) ranked.push(m[1].trim());
+  });
+  return ranked;
+}
+
+function buildFlavorScores(evts) {
+  const scores = {};
+  evts.forEach(e => {
+    const ranked = parseRanking(e.flavorRanking);
+    const n = ranked.length;
+    ranked.forEach((flavor, i) => {
+      const pts = n - i; // 1st gets n pts, last gets 1 pt
+      scores[flavor] = (scores[flavor] || 0) + pts;
+    });
+  });
+  return Object.entries(scores).sort((a, b) => b[1] - a[1]);
+}
+
+function renderFlavorChart(evts) {
+  const panel = document.getElementById('chartPanel');
+  const container = document.getElementById('flavorChart');
+  const scores = buildFlavorScores(evts);
+  if (scores.length === 0) { panel.style.display = 'none'; return; }
+  panel.style.display = 'block';
+  const max = scores[0][1];
+  const rankClasses = ['rank1','rank2','rank3','rank4','rank5','rankn'];
+  container.innerHTML = scores.map(([flavor, pts], i) => {
+    const pct = Math.round((pts / max) * 100);
+    const cls = rankClasses[Math.min(i, rankClasses.length - 1)];
+    return `
+      <div class="bar-row">
+        <div class="bar-label">${flavor}</div>
+        <div class="bar-track">
+          <div class="bar-fill ${cls}" style="width:${pct}%">
+            <span class="bar-pts">${pts} pts</span>
+          </div>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+// ---------------------------------------------------------------
+// UTILITY
+// ---------------------------------------------------------------
+function fmt(n){ return Number(n||0).toLocaleString(); }
+function fmtMoney(n){ return '$' + Number(n||0).toLocaleString(undefined,{minimumFractionDigits:0,maximumFractionDigits:2}); }
+function weekOfMonth(d){ const date=new Date(d); const fd=new Date(date.getFullYear(),date.getMonth(),1).getDay(); return Math.ceil((date.getDate()+fd)/7); }
+function monthLabel(d){ return new Date(d).toLocaleDateString('en-US',{month:'long',year:'numeric'}); }
+function dayParts(d){ const date=new Date(d); return {num:date.getDate(),mon:date.toLocaleDateString('en-US',{month:'short'})}; }
+function setStatus(type,label){ document.getElementById('statusPill').innerHTML=`<span class="status-pill ${type}"><span class="dot"></span>${label}</span>`; }
+function timeNow(){ return new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}); }
+function openSheet(){ SHEET_URL ? window.open(SHEET_URL,'_blank') : alert('Set SHEET_URL in the script config.'); }
+
+// ---------------------------------------------------------------
+// BUILD SUMMARY STRIP
+// ---------------------------------------------------------------
+function buildSummary() {
+  if (!events.length) { document.getElementById('summaryStrip').innerHTML=''; return; }
+  const totalAttendance   = events.reduce((s,e)=>s+e.attendance,0);
+  const totalInteractions = events.reduce((s,e)=>s+e.interactions,0);
+  const totalSamples      = events.reduce((s,e)=>s+e.totalSamples,0);
+  const totalCoupons      = events.reduce((s,e)=>s+Number(e.coupons||0),0);
+  const totalStaffHours   = events.reduce((s,e)=>s+(e.staffHours||0),0);
+  const totalCost         = events.reduce((s,e)=>s+(e.placementCost||0),0);
+  const stats = [
+    {label:"Total events",         value:fmt(events.length), accent:true},
+    {label:"Est. attendance",       value:fmt(totalAttendance)},
+    {label:"Est. interactions",     value:fmt(totalInteractions)},
+    {label:"Total samples",         value:fmt(totalSamples)},
+    {label:"Free coupons",          value:fmt(totalCoupons)},
+    {label:"Staff hours logged",    value:fmt(totalStaffHours)},
+    {label:"Total placement cost",  value:fmtMoney(totalCost), accent:true}
+  ];
+  document.getElementById('summaryStrip').innerHTML = stats.map(s=>`
+    <div class="stat">
+      <div class="label">${s.label}</div>
+      <div class="value ${s.accent?'accent':''}">${s.value}</div>
+    </div>`).join('');
+}
+
+// ---------------------------------------------------------------
+// BUILD EVENT CARDS GROUPED BY MONTH → WEEK
+// ---------------------------------------------------------------
+function buildGroups() {
+  const container = document.getElementById('groupsContainer');
+  container.innerHTML = '';
+  if (!events.length) {
+    container.innerHTML = `<div class="empty-state">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="9" y1="16" x2="15" y2="16"/></svg>
+      <h3>No events yet</h3>
+      <p>Once the team logs events in the source sheet, they will appear here automatically.</p>
+    </div>`;
+    return;
+  }
+  const groups = {};
+  events.forEach(e => {
+    const m = monthLabel(e.date);
+    const w = "Week " + weekOfMonth(e.date);
+    groups[m] = groups[m] || {};
+    groups[m][w] = groups[m][w] || [];
+    groups[m][w].push(e);
+  });
+  Object.keys(groups).forEach(month => {
+    const weeks = groups[month];
+    const totalCount = Object.values(weeks).reduce((s,a)=>s+a.length,0);
+    const monthDiv = document.createElement('div');
+    monthDiv.className = 'month-group';
+    const header = document.createElement('div');
+    header.className = 'month-header';
+    header.innerHTML = `<h2>${month}</h2><span class="count">${totalCount} event${totalCount===1?'':'s'}</span><svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>`;
+    const divider = document.createElement('div');
+    divider.className = 'month-divider';
+    const body = document.createElement('div');
+    body.className = 'month-body';
+    Object.keys(weeks).sort((a,b)=>a.localeCompare(b,undefined,{numeric:true})).forEach(weekKey => {
+      const weekDiv = document.createElement('div');
+      weekDiv.className = 'week-group';
+      const label = document.createElement('div');
+      label.className = 'week-label';
+      label.textContent = weekKey;
+      const grid = document.createElement('div');
+      grid.className = 'card-grid';
+      grid.innerHTML = weeks[weekKey].map(buildCard).join('');
+      weekDiv.appendChild(label);
+      weekDiv.appendChild(grid);
+      body.appendChild(weekDiv);
+    });
+    header.addEventListener('click', () => {
+      header.classList.toggle('collapsed');
+      body.classList.toggle('collapsed');
+      body.style.maxHeight = body.classList.contains('collapsed') ? '0px' : body.scrollHeight+'px';
+    });
+    monthDiv.appendChild(header);
+    monthDiv.appendChild(divider);
+    monthDiv.appendChild(body);
+    container.appendChild(monthDiv);
+    requestAnimationFrame(() => { body.style.maxHeight = body.scrollHeight+'px'; });
+  });
+}
+
+function buildCard(e) {
+  const d = dayParts(e.date);
+  const rankClasses = ['','r2','r3','r4','r5'];
+  const ranked = parseRanking(e.flavorRanking);
+  const flavorHTML = ranked.length
+    ? ranked.map((f,i) => `
+        <div class="flavor-rank-item">
+          <div class="rank-num ${rankClasses[i]||'r5'}">${i+1}</div>
+          <div class="rank-name">${f}</div>
+        </div>`).join('')
+    : '<span style="font-size:12.5px;color:var(--ink-soft)">Not yet submitted</span>';
+
+  return `
+    <div class="card">
+      <div class="card-head">
+        <h3>${e.event}</h3>
+        <div class="date-badge"><span class="num">${d.num}</span>${d.mon}</div>
+      </div>
+      <div class="meta-row">
+        <span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          ${e.venue||'—'}
+        </span>
+        <span class="weather-pill">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+          ${e.weather||'—'}
+        </span>
+        ${e.placementCost ? `<span class="cost-pill">${fmtMoney(e.placementCost)} placement</span>` : ''}
+      </div>
+
+      <div class="card-divider"></div>
+
+      <div>
+        <div class="section-label">Event metrics</div>
+        <div class="stat-mini-grid">
+          <div class="stat-mini"><div class="num">${fmt(e.attendance)}</div><div class="lbl">Est. attendance</div></div>
+          <div class="stat-mini"><div class="num">${fmt(e.interactions)}</div><div class="lbl">Est. interactions</div></div>
+          <div class="stat-mini"><div class="num">${fmt(e.totalSamples)}</div><div class="lbl">Total samples</div></div>
+          <div class="stat-mini"><div class="num">${fmt(e.coupons)}</div><div class="lbl">Free coupons</div></div>
+          <div class="stat-mini"><div class="num">${e.staffHours||'—'}</div><div class="lbl">Staff hours</div></div>
+        </div>
+      </div>
+
+      <div class="card-divider"></div>
+
+      <div>
+        <div class="section-label">Flavor ranking</div>
+        <div class="flavor-ranking">${flavorHTML}</div>
+      </div>
+
+      <div class="card-divider"></div>
+
+      <div class="detail"><strong>Team feedback</strong>${e.teamFeedback||'—'}</div>
+      <div class="detail"><strong>Consumer reactions</strong>${e.consumerReactions||'—'}</div>
+      ${e.vendorInsights ? `<div class="detail"><strong>Vendor &amp; competitor insights</strong>${e.vendorInsights}</div>` : ''}
+    </div>`;
+}
+
+// ---------------------------------------------------------------
+// DATA LOADING
+// ---------------------------------------------------------------
+async function loadData(isManualRefresh) {
+  const btn  = document.getElementById('refreshBtn');
+  const icon = document.getElementById('refreshIcon');
+  const sync = document.getElementById('lastSync');
+  if (isManualRefresh) { icon.classList.add('spin'); btn.disabled=true; }
+
+  if (!API_URL) {
+    events = sampleEvents;
+    setStatus('sample','Sample data — connect API_URL for live sync');
+    sync.textContent = 'Preview mode';
+    render();
+    if (isManualRefresh) { icon.classList.remove('spin'); btn.disabled=false; }
+    return;
+  }
+
+  try {
+    const res = await fetch(API_URL, {cache:'no-store'});
+    if (!res.ok) throw new Error('HTTP '+res.status);
+    const data = await res.json();
+    if (data.error) throw new Error(data.error);
+    events = data.events || [];
+    setStatus('live','Live — connected to Google Sheets');
+    sync.textContent = 'Last refreshed at '+timeNow();
+  } catch(err) {
+    if (!events.length) events = sampleEvents;
+    setStatus('error','Could not reach the sheet — showing last known data');
+    sync.textContent = 'Last attempted at '+timeNow();
+    console.error(err);
+  }
+
+  render();
+  if (isManualRefresh) { icon.classList.remove('spin'); btn.disabled=false; }
+}
+
+function render() {
+  buildSummary();
+  renderFlavorChart(events);
+  buildGroups();
+}
+
+function refreshData() { loadData(true); }
+loadData(false);
+</script>
+</body>
+</html>
